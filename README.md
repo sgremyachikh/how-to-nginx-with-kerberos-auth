@@ -1,6 +1,24 @@
-## Веб авторизация доменного пользователя через nginx с использованием Kerberos на сервере с Centos
+## Веб аутентификация доменного пользователя через nginx с использованием Kerberos на сервере с Centos
 
-### windows
+Введение.
+[Использовал частично статью с хабра](https://habr.com/ru/company/aktiv-company/blog/170829/)
+
+Kerberos – сетевой протокол аутентификации, позволяющий передавать данные через незащищённые сети для безопасной идентификации. Ориентирован, в первую очередь, на клиент-серверную модель и обеспечивает взаимную аутентификацию. Существует несколько open source реализаций протокола Kerberos, например оригинальная MIT Kerberos и Heimdal.
+
+Терминология Kerberos
+ - Билет (ticket) – временные данные, выдаваемые клиенту для аутентификации на сервере, на котором располагается необходимая служба.
+ - Клиент (client) – некая сущность в сети (пользователь, хост или сервис), которая может получить билет от Kerberos.
+ - Центр выдачи ключей (key distribution center, KDC) – сервис, выдающий билеты Kerberos.
+ - Область (realm) – сеть, используемая Kerberos, состоящая из серверов KDC и множества клиентов. Имя realm регистрозависимо, обычно пишется в верхнем регистре и совпадает с именем домена.
+ - Принципал (principal) – уникальное имя для клиента, для которого разрешается аутентификация в Kerberos. Записывается в виде root[/instance]@REALM.
+
+Файлы настроек Kerberos
+На сервере:
+/etc/krb5kdc/kdc.conf — настройки KDC
+На клиенте и сервере:
+/etc/kbr5.conf — настройки сервера аутентификации (описание realms, доменных имен и других настроек)
+
+## windows
 
 windows AD:
 
@@ -13,7 +31,7 @@ ktpass -princ HTTP/webserver-hostname@TESTDOMAIN.TESTROOT -ptype KRB5_NT_PRINCIP
 ```
 Полученный KEYTAB-файл, передаем любым удобным способом на Веб-сервер (расположение KEYTAB-файла на моем веб-сервере — /root/vol/webserver-hostname.keytab).
 
-### web-server
+## web-server
 ```bash
 yum install ntp ntpdate krb5-libs.x86_64 krb5-workstation.x86_64 krb5-server krb5-devel.x86_64 heimdal-devel.x86_64 make git gcc.x86_64 openssl-devel -y
 
@@ -35,7 +53,7 @@ ntpdate domain-controller.my-domain.myroot
 systemctl enable --now ntpd
 ```
 
-#### Настройка Kerberos
+### Настройка Kerberos
 
 Кладем /root/vol/webserver-hostname.keytab на web-server
 
@@ -163,7 +181,7 @@ systemctl start nginx
 
 systemctl status nginx
 ```
-### Аутентификация пользователя
+### Аутентификация пользователя в nginx
 
 конфиг nginx:
 ```conf
