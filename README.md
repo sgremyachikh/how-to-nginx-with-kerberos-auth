@@ -1,4 +1,4 @@
-## Веб аутентификация доменного пользователя через nginx с использованием Kerberos на сервере с Centos
+# Аутентификация пользователя через nginx с использованием Kerberos(Active Directory) на сервере с Centos
 
 Введение.
 [Использовал частично статью с хабра](https://habr.com/ru/company/aktiv-company/blog/170829/)
